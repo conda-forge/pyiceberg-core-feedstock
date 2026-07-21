@@ -1,7 +1,7 @@
 context:
   name: pyiceberg-core
   python_name: pyiceberg_core
-  version: "0.9.1"
+  version: "0.10.0"
 
 package:
   name: ${{ name|lower }}
@@ -9,7 +9,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ python_name }}-${{ version }}.tar.gz
-  sha256: 7e146e7a8a26f5f9cc6a3d09eb16071774d4e95eb5980a34484cdeaf18109df9
+  sha256: 1c3470fd8eb38684e06d9a80c79a9200268c5779d9c65a467e3caf484dfc0ec9
 
 build:
   number: 0
