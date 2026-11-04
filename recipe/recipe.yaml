@@ -1,7 +1,7 @@
 context:
   name: pyiceberg-core
   python_name: pyiceberg_core
-  version: "0.10.1"
+  version: "0.11.0"
 
 package:
   name: ${{ name|lower }}
@@ -9,7 +9,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ python_name }}-${{ version }}.tar.gz
-  sha256: c5e600728071032a4027c4c36680e4806c98f443057a26523532a2f830db4c89
+  sha256: ce52bd4ba0a69011b0a110275cf2711790c9c420e2dd0aa188adbec4c3a8e724
 
 build:
   number: 0
@@ -47,14 +47,9 @@ tests:
         - abi3audit
     script:
       - pip check
-      - if: unix
-        then:
-          - export SP_DIR=$(python -c "import site; print(site.getsitepackages()[0])")
-          - abi3audit $SP_DIR/pyiceberg_core/pyiceberg_core_rust.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}
-      - if: win
-        then:
-          - set "SP_DIR=%PREFIX%\\Lib\\site-packages"
-          - abi3audit %SP_DIR%\\pyiceberg_core\\pyiceberg_core_rust.pyd -s -v --assume-minimum-abi3 ${{ python_min }}
+      # Ask the interpreter where the extension module actually landed instead of
+      # hard-coding site-packages / file suffix per platform.
+      - python -c "import importlib.util, subprocess, sys; so = importlib.util.find_spec('pyiceberg_core.pyiceberg_core_rust').origin; print('auditing', so); sys.exit(subprocess.call([sys.executable, '-m', 'abi3audit', so, '-s', '-v', '--assume-minimum-abi3', '${{ python_min }}']))"
 
 about:
   homepage: https://github.com/apache/iceberg-rust/
